@@ -13,7 +13,7 @@ export default function UploadPage() {
 
   const handleUpload = async () => {
     if (!file) {
-      alert('画像ファイルを選択してください')
+      alert('请选择图片文件 / 画像ファイルを選択してください')
       return
     }
 
@@ -26,10 +26,10 @@ export default function UploadPage() {
 
     if (error) {
       console.error(error)
-      setMessage('アップロードに失敗しました：' + error.message)
+      setMessage('上传失败：' + error.message + ' / アップロードに失敗しました：' + error.message)
     } else {
-      setMessage('アップロードが完了しました！')
-      console.log('ファイルが正常にアップロードされました：', data)
+      setMessage('上传成功！ / アップロードが完了しました！')
+      console.log('文件上传成功 / ファイルが正常にアップロードされました：', data)
     }
 
     setUploading(false)
@@ -37,11 +37,13 @@ export default function UploadPage() {
 
   return (
     <div style={{ padding: 30, fontFamily: 'sans-serif' }}>
-      <h1>ツリーホール · 画像アップロード</h1>
-      <p style={{ marginBottom: 10 }}>匿名で写真をアップロードできます</p>
+      <h1>树洞 · 图片上传 / ツリーホール · 画像アップロード</h1>
+      <p style={{ marginBottom: 10 }}>
+        可以匿名上传照片 / 匿名で写真をアップロードできます
+      </p>
       <input type="file" accept="image/*" onChange={handleFileChange} />
       <button onClick={handleUpload} disabled={uploading} style={{ marginLeft: 10 }}>
-        {uploading ? 'アップロード中...' : 'アップロードする'}
+        {uploading ? '上传中... / アップロード中...' : '上传 / アップロードする'}
       </button>
       <p style={{ marginTop: 20 }}>{message}</p>
     </div>
