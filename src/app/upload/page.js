@@ -13,7 +13,7 @@ export default function UploadPage() {
 
   const handleUpload = async () => {
     if (!file) {
-      alert('请选择图片文件 / 画像ファイルを選択してください')
+      alert('画像ファイルを選択してください（请先选择图片）')
       return
     }
 
@@ -21,15 +21,15 @@ export default function UploadPage() {
     const fileName = `${Date.now()}-${file.name}`
 
     const { data, error } = await supabase.storage
-      .from('photos')
+      .from('photos') // 请确保你的 bucket 名为 photos
       .upload(fileName, file)
 
     if (error) {
       console.error(error)
-      setMessage('上传失败：' + error.message + ' / アップロードに失敗しました：' + error.message)
+      setMessage('アップロードに失敗しました（上传失败）：' + error.message)
     } else {
-      setMessage('上传成功！ / アップロードが完了しました！')
-      console.log('文件上传成功 / ファイルが正常にアップロードされました：', data)
+      setMessage('アップロードが完了しました！（上传成功）')
+      console.log('ファイルが正常にアップロードされました（文件上传成功）：', data)
     }
 
     setUploading(false)
@@ -37,13 +37,11 @@ export default function UploadPage() {
 
   return (
     <div style={{ padding: 30, fontFamily: 'sans-serif' }}>
-      <h1>树洞 · 图片上传 / ツリーホール · 画像アップロード</h1>
-      <p style={{ marginBottom: 10 }}>
-        可以匿名上传照片 / 匿名で写真をアップロードできます
-      </p>
+      <h1>ツリーホール · 画像アップロード（树洞图片上传）</h1>
+      <p style={{ marginBottom: 10 }}>匿名で写真をアップロードできます（可匿名上传图片）</p>
       <input type="file" accept="image/*" onChange={handleFileChange} />
       <button onClick={handleUpload} disabled={uploading} style={{ marginLeft: 10 }}>
-        {uploading ? '上传中... / アップロード中...' : '上传 / アップロードする'}
+        {uploading ? 'アップロード中...（上传中）' : 'アップロードする（上传）'}
       </button>
       <p style={{ marginTop: 20 }}>{message}</p>
     </div>
