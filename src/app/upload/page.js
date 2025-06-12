@@ -21,7 +21,7 @@ export default function UploadPage() {
     const fileName = `${Date.now()}-${file.name}`
 
     const { data, error } = await supabase.storage
-      .from('photos') // 请确保你的 bucket 名为 photos
+      .from('photos')
       .upload(fileName, file)
 
     if (error) {
