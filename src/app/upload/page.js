@@ -1,56 +1,48 @@
+'use client'
+import React, { useState } from 'react'
+import { supabase } from '../supabaseConfig'
 
-"use client"
+export default function UploadPage() {
+  const [file, setFile] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const [message, setMessage] = useState('')
 
-import Image from "next/image";
-import { useState } from "react";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../firebaseConfig";
-
-export default function Upload() {
-  const [file, setFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadedUrl, setUploadedUrl] = useState(null);
-
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0])
   }
 
   const handleUpload = async () => {
-    if (!file) return;
-
-    setUploading(true);
-    const storageRef = ref(storage, `images/${file.name}`);
-
-    try {
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      setUploadedUrl(url);
-      console.log("File Uploaded Succesfuly");
-    } catch (error) {
-      console.error('Error uploading the file', error);
-    } finally {
-      setUploading(false);
+    if (!file) {
+      alert('请选择图片文件')
+      return
     }
+
+    setUploading(true)
+    const fileName = `${Date.now()}-${file.name}`
+
+    const { data, error } = await supabase.storage
+      .from('photos') // ← 请确保你的 bucket 名是 photos
+      .upload(fileName, file)
+
+    if (error) {
+      console.error(error)
+      setMessage('上传失败：' + error.message)
+    } else {
+      setMessage('上传成功！')
+      console.log('File uploaded:', data)
+    }
+
+    setUploading(false)
   }
 
   return (
-    <div>
-      <input type="file" onChange={handleFileChange} />
+    <div style={{ padding: 30 }}>
+      <h1>图片上传</h1>
+      <input type="file" accept="image/*" onChange={handleFileChange} />
       <button onClick={handleUpload} disabled={uploading}>
-        {uploading ? "Uploading..." : "Upload Image"}
+        {uploading ? '上传中...' : '上传'}
       </button>
-      { uploadedUrl && (
-        <div>
-          <p>Uploaded image:</p>
-          <Image
-            src={uploadedUrl}
-            alt="Uploaded image"
-            width={300}
-            height={300}
-            layout="responsive"
-          />
-        </div>
-      )}
+      <p>{message}</p>
     </div>
   )
 }
