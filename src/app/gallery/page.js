@@ -1,49 +1,49 @@
+'use client'
+import React, { useEffect, useState } from 'react'
+import { supabase } from '../supabaseConfig'
 
-"use client"
-
-import { listAll, ref, getDownloadURL } from "firebase/storage";
-import { useEffect, useState } from "react"
-import { storage } from "../firebaseConfig";
-import Image from "next/image";
-
-
-export default function Gallery() {
-  const [images, setImages] = useState([]);
+export default function GalleryPage() {
+  const [images, setImages] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchImages = async () => {
-      const imagesRef = ref(storage, "images/");
+      const { data, error } = await supabase.storage.from('photos').list('', {
+        sortBy: { column: 'created_at', order: 'desc' },
+      })
 
-      try {
-        const result = await listAll(imagesRef);
-        const urls = await Promise.all(result.items.map(item => getDownloadURL(item)));
-        setImages(urls);
-      } catch(error) {
-        console.error("Error fetching images", error);
+      if (error) {
+        console.error('画像の取得に失敗しました / 获取图片失败:', error)
+      } else {
+        const urls = await Promise.all(
+          data.map(async (item) => {
+            const { data: urlData } = await supabase.storage.from('photos').getPublicUrl(item.name)
+            return urlData.publicUrl
+          })
+        )
+        setImages(urls)
       }
+
+      setLoading(false)
     }
 
-    fetchImages();
-  }, []);
+    fetchImages()
+  }, [])
 
   return (
-    <div>
-      <h1>Gallery</h1>
-      <div style={{display: "flex", flexDirection: "row"}}>
-        {images.map((url, index) =>
-          <div key={url} style={{margin: 10, position: 'relative', width: '300px', height: '500px'}}>
-            <Image
-              src={url}
-              alt={`Image ${index}`}
-              sizes="300px"
-              fill
-              style={{
-                objectFit: 'contain',
-              }}
-            />
-          </div>
-        )}
-      </div>
+    <div style={{ padding: 30, fontFamily: 'sans-serif' }}>
+      <h1>画像一覧 · Gallery</h1>
+      {loading ? (
+        <p>読み込み中... / 加载中...</p>
+      ) : images.length === 0 ? (
+        <p>画像がまだアップロードされていません / 暂无上传图片</p>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+          {images.map((url, index) => (
+            <img key={index} src={url} alt={`image-${index}`} style={{ width: '100%', borderRadius: 8 }} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
