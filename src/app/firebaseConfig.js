@@ -1,17 +1,12 @@
-
-import { initializeApp } from "firebase/app";
-import { getStorage } from "firebase/storage";
-
 const firebaseConfig = {
-  apiKey: "AIzaSyCYSh1JiiMWk6vs6wouH-k8BYweNvICczU",
-  authDomain: "next-image-upload.firebaseapp.com",
-  projectId: "next-image-upload",
-  storageBucket: "next-image-upload.appspot.com",
-  messagingSenderId: "116652877305",
-  appId: "1:116652877305:web:baad1c1770764b18d54928"
+  apiKey: "AIzaSyDFG0Byry9RSPl7o28zRphaPAj1RSI12aA",
+  authDomain: "treehole-photo.firebaseapp.com",
+  projectId: "treehole-photo",
+  storageBucket: "treehole-photo.appspot.com", 
+  messagingSenderId: "694924256189",
+  appId: "1:694924256189:web:ac0caaa9907f239322e8d4",
+  measurementId: "G-V3VS3WNPYC"
 };
 
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app);
+export default firebaseConfig;
 
-export {storage};
